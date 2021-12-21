@@ -1,3 +1,5 @@
+import { AddRounded } from "@material-ui/icons";
+
 export function customSort(type = 'asc',key,array){
     let arrToBeSorted = [...array]
     if(key !=='categoryofclosedcharts'&&key ==='chartsopen'){
@@ -54,4 +56,10 @@ export function customSearch(filters,array){
         }
     })
     return result
+}
+export function searchTree(data,id){
+    
+}
+export function addNode(data,obj,parent){
+
 }
