@@ -63,3 +63,34 @@ export function searchTree(data,id){
 export function addNode(data,obj,parent){
 
 }
+export function createNode(string,length){
+   
+    let split = string.split(' '),firstWord = 0
+    for(let i = 0 ; i < split.length;i++){
+        if(split[i]!==''){
+            firstWord =i 
+            break;
+        }
+    }
+    let node = {
+        id:length.toString(),
+        children:[],
+        title:split[firstWord],
+        visibility:false
+    }
+    let res = node
+    for(let i = firstWord+1 ; i < split.length ; i++){
+        // node.children
+        node.children = [
+            {
+            id:node.id+'-0',
+            children:[],
+            title:split[i],
+            visibility:false
+        }
+    ]
+    node = node.children[0]
+    }
+   return res;
+}
+

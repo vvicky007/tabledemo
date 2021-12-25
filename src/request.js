@@ -7,7 +7,9 @@ import {
   } from "@apollo/client";
   export const client = new ApolloClient({
     uri: 'http://localhost:9000/graphql',
-    cache: new InMemoryCache()
+    cache: new InMemoryCache({
+      addTypename: false
+    })
   });
 
 const getTableData = gql`
@@ -29,3 +31,44 @@ export async function getData(start,end){
     const {tableData} = data;
     return tableData
 } 
+export async function postNotes(data){
+  const mutation = gql`
+  mutation postNotes($data:[NoteinNotes]!){
+    notes:createNotes(input:$data){
+     id
+     children{
+       id 
+       title
+       visibility
+     }
+     title
+     visibility
+   }
+   }
+  `
+  console.log('notes is',data)
+  const {data:notes} = await client.mutate({mutation,variables:{data}})
+  return notes
+}
+export async function getNotes(){
+  const getnotesQuery = gql`
+  query getNotes{
+    notes{
+      id
+      children{
+        id
+        title
+        visibility
+      }
+      title
+      visibility
+    }
+  }
+  `
+  let {data} = await client.query({query:getnotesQuery})
+  data = JSON.parse(JSON.stringify(data))
+  if(data.notes){
+    return data.notes
+  }
+  return []
+}

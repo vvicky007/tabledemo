@@ -1,27 +1,46 @@
 import { useState,useCallback , useEffect } from "react"
 import { Row,Col, ListGroupItem ,InputGroup,FormControl,Button} from "react-bootstrap"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {postNotes,getNotes} from './request'
 import ListGroup from 'react-bootstrap/ListGroup'
 import { faAngleRight,faAngleDown } from '@fortawesome/free-solid-svg-icons'
 import debounce from 'lodash.debounce';
 import { search } from "./utills/CustomSearch"
 import { cloneDeep } from "@apollo/client/utilities"
-
-export default function DisplayUL({data}){
+import VoiceToText from "./VoiceToText"
+export default function DisplayUL(){
+    const [data,setData] = useState([])
     const [searchVal,setSearchVal] = useState('');
     const [filteredData,setFilteredData] = useState(data)
     const changeHandler = (e)=>{
         setSearchVal(e.target.value)
     }
     const debouncedChangeHandler = useCallback(debounce(changeHandler,800),[])
+   
     useEffect(()=>{
-        let filtered =  search(data,searchVal)
+        let filtered =  search([...data],searchVal)
         setFilteredData(cloneDeep(filtered))
-    },[searchVal])
+    },[searchVal,data])
+    useEffect(async()=>{
+        console.log('data is',data)
+        if(data.length!==0){
+            await postNotes(data)
+        }   
+    },[data])
+    useEffect(async ()=>{
+        // setData(await getNotes()) 
+        const res = await getNotes()
+        setData([...res])
+     },[])
+    const dataHandler = (obj)=>{
+        console.log('obj is',obj)
+        setData([...data,obj])
+    }
     return (
        <>
         <Col> 
-            <InputGroup className="mb-3" style={{width:'250px'}} >
+            <VoiceToText dataHandler = {dataHandler} length = {data.length}/>
+            <InputGroup className="mb-3 mt-3" style={{width:'250px'}} >
                 <FormControl
                 placeholder="Search"
                 aria-label="Search"
@@ -55,7 +74,7 @@ export default function DisplayUL({data}){
                 </Button>
             </Row>
          </Col>
-         <List data = {filteredData} />
+         {data&& <List data = {filteredData} />}
        </>
     )
 }
@@ -88,7 +107,7 @@ function Tree({node}){
                          <FontAwesomeIcon icon={ childVisibility? faAngleDown:faAngleRight} onClick={()=>{setChildVisibility(!childVisibility)}} />
                     } 
                     <div style={{marginLeft:'8px'}}>
-                    {node.label}
+                    {node.title}
                     </div> 
                 </ListGroup.Item>
                 {

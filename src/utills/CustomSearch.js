@@ -6,8 +6,8 @@ export function deepSearch(data,searchVal){
         data.visibility = false;
         return data
     };
-    if(data.label){
-        if(data.label.toLowerCase().includes(searchVal.toLowerCase()))
+    if(data.title){
+        if(data.title.toLowerCase().includes(searchVal.toLowerCase()))
         {   
             data.visibility = true
             return data;
