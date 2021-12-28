@@ -46,7 +46,6 @@ export async function postNotes(data){
    }
    }
   `
-  console.log('notes is',data)
   const {data:notes} = await client.mutate({mutation,variables:{data}})
   return notes
 }
@@ -71,4 +70,17 @@ export async function getNotes(){
     return data.notes
   }
   return []
+}
+export async function getAnalysis(){
+  const getAnalysisquery = gql`
+  query analysedWords{
+    analysed{
+      word
+      sentence
+    }
+  }
+  ` 
+  let {data} = await client.query({query:getAnalysisquery})
+  let {analysed} = data
+  return analysed
 }

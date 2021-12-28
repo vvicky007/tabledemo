@@ -1,7 +1,7 @@
 import { useState,useCallback , useEffect } from "react"
 import { Row,Col, ListGroupItem ,InputGroup,FormControl,Button} from "react-bootstrap"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {postNotes,getNotes} from './request'
+import {postNotes,getNotes,getAnalysis} from './request'
 import ListGroup from 'react-bootstrap/ListGroup'
 import { faAngleRight,faAngleDown } from '@fortawesome/free-solid-svg-icons'
 import debounce from 'lodash.debounce';
@@ -12,6 +12,7 @@ export default function DisplayUL(){
     const [data,setData] = useState([])
     const [searchVal,setSearchVal] = useState('');
     const [filteredData,setFilteredData] = useState(data)
+    const [analysis,setAnalysis] = useState([])
     const changeHandler = (e)=>{
         setSearchVal(e.target.value)
     }
@@ -22,7 +23,6 @@ export default function DisplayUL(){
         setFilteredData(cloneDeep(filtered))
     },[searchVal,data])
     useEffect(async()=>{
-        console.log('data is',data)
         if(data.length!==0){
             await postNotes(data)
         }   
@@ -31,9 +31,11 @@ export default function DisplayUL(){
         // setData(await getNotes()) 
         const res = await getNotes()
         setData([...res])
+        console.log('...')
+        const analysed =  await getAnalysis()
+        setAnalysis([...analysed])
      },[])
     const dataHandler = (obj)=>{
-        console.log('obj is',obj)
         setData([...data,obj])
     }
     return (
@@ -75,6 +77,22 @@ export default function DisplayUL(){
             </Row>
          </Col>
          {data&& <List data = {filteredData} />}
+         <Col>
+         <Row style={{marginTop:'20px'}}>
+            <Col xs = {3}>Word</Col>
+            <Col xs = {3}>Sentence</Col>
+         </Row>
+                {
+                    analysis.map((ana)=>{
+                        return (
+                            <Row style={{marginTop:'10px'}}> 
+                            <Col xs = {3}>{ana.word}</Col>
+                            <Col xs = {3}>{ana.sentence}</Col>
+                            </Row> 
+                        )
+                    })
+                }
+         </Col>
        </>
     )
 }
