@@ -1,4 +1,4 @@
-import { useState,useCallback , useEffect } from "react"
+import { useState,useCallback , useEffect, useRef } from "react"
 import { Row,Col, ListGroupItem ,InputGroup,FormControl,Button} from "react-bootstrap"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {postNotes,getNotes,getAnalysis} from './request'
@@ -13,6 +13,7 @@ export default function DisplayUL(){
     const [searchVal,setSearchVal] = useState('');
     const [filteredData,setFilteredData] = useState(data)
     const [analysis,setAnalysis] = useState([])
+    const audioRef = useRef(null)
     const changeHandler = (e)=>{
         setSearchVal(e.target.value)
     }
@@ -41,7 +42,8 @@ export default function DisplayUL(){
     return (
        <>
         <Col> 
-            <VoiceToText dataHandler = {dataHandler} length = {data.length}/>
+            <input type="file" accept="audio/*" capture></input>
+            <audio ref id="player" controls></audio>
             <InputGroup className="mb-3 mt-3" style={{width:'250px'}} >
                 <FormControl
                 placeholder="Search"
@@ -53,28 +55,6 @@ export default function DisplayUL(){
                     Search
                 </Button> */}
             </InputGroup>
-            <Row>
-            <InputGroup className="mb-3" style={{width:'250px'}} >
-                <FormControl
-                placeholder="Enter Parent Value"
-                aria-label="Enter Parent Value"
-                aria-describedby="basic-addon2"
-                onChange={debouncedChangeHandler}
-                />
-            </InputGroup>
-            <InputGroup className="mb-3" style={{width:'250px'}} >
-                <FormControl
-                placeholder="Add Data"
-                aria-label="Data"
-                aria-describedby="basic-addon2"
-                onChange={debouncedChangeHandler}
-                />
-                
-            </InputGroup>
-            <Button variant="outline-secondary" variant="primary" id="button-addon2" size="sm" style={{width:'200px',height:'38px'}} >
-                    Search
-                </Button>
-            </Row>
          </Col>
          {data&& <List data = {filteredData} />}
          <Col>
